@@ -21,26 +21,27 @@ public class EmployeeValidator {
      * @return エラーのリスト
      */
     public static List<String> validate(
-            EmployeeService service,EmployeeView ev,Boolean codeDuplicateCheckFlag,Boolean passwordCheckFlag){
+            EmployeeService service, EmployeeView ev, Boolean codeDuplicateCheckFlag, Boolean passwordCheckFlag) {
         List<String> errors = new ArrayList<String>();
 
         //社員番号のチェック
-        String codeError = validateCode(service,ev.getCode(),codeDuplicateCheckFlag);
-        if(!codeError.equals("")) {
+        String codeError = validateCode(service, ev.getCode(), codeDuplicateCheckFlag);
+        if (!codeError.equals("")) {
             errors.add(codeError);
         }
         //氏名のチェック
         String nameError = validateName(ev.getName());
-        if(!nameError.equals("")) {
+        if (!nameError.equals("")) {
             errors.add(nameError);
         }
         //パスワードのチェック
-        String passError = validatePassword(ev.getPassword(),passwordCheckFlag);
-        if(!passError.equals("")) {
+        String passError = validatePassword(ev.getPassword(), passwordCheckFlag);
+        if (!passError.equals("")) {
             errors.add(passError);
         }
         return errors;
     }
+
     /**
      * @param service EmployeeServiceのインスタンス
      * @param code 社員番号
