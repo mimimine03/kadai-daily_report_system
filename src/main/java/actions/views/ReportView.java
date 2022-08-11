@@ -52,4 +52,10 @@ public class ReportView {
      * 更新日時
      */
     private LocalDateTime updatedAt;
+
+    /**
+     * いいねのカウント
+     */
+
+    private Long favCount;
 }

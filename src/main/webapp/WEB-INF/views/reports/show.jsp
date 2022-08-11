@@ -37,14 +37,25 @@
                     <fmt:parseDate value="${report.updatedAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="updateDay" type="date" />
                     <td><fmt:formatDate value="${updateDay}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
                 </tr>
+                <tr>
+                    <th>いいね！</th>
+                    <td><pre><c:out value="${report.favCount}" /></pre></td>
+
+                </tr>
             </tbody>
         </table>
 
-        <c:if test="${sessionScope.login_employee.id == report.employee.id}">
+        <c:if test="${sessionScope.login_employee.id != report.employee.id}">
+            <form method="POST" action="<c:url value='/reports/index' />">
             <p>
-                <a href="<c:url value='?action=${actRep}&command=${commEdt}&id=${report.id}' />">この日報を編集する</a>
+
+
+        <input type="hidden" name="${AttributeConst.TOKEN.getValue()}" value="${_token}" />
+        <button type="submit">いいね！</button>
             </p>
-        </c:if>
+            </form>
+            </c:if>
+                <a href="<c:url value='?action=${actRep}&command=${commEdt}&id=${report.id}' />">この日報を編集する</a>
 
         <p>
             <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">一覧に戻る</a>

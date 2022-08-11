@@ -29,7 +29,10 @@ import lombok.Setter;
         query = JpaConst.Q_FAV_COUNT_DEF),
 @NamedQuery(
         name = JpaConst.Q_FAV_REPORT_ALL_MINE,
-        query = JpaConst.Q_FAV_REPORT_ALL_MINE_DEF)
+        query = JpaConst.Q_FAV_REPORT_ALL_MINE_DEF),
+@NamedQuery(
+        name = JpaConst.Q_FAV_COUNT_REGISTERED_BY_EMP_AND_REP,
+        query = JpaConst.Q_FAV_COUNT_REGISTERED_BY_EMP_AND_REP_DEF)
 })
 
 

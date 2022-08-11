@@ -7,11 +7,13 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import actions.views.EmployeeView;
+import actions.views.FavoriteCountView;
 import actions.views.ReportView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
 import constants.MessageConst;
+import services.FavoriteService;
 import services.ReportService;
 
 /**
@@ -21,6 +23,7 @@ import services.ReportService;
 public class ReportAction extends ActionBase {
 
     private ReportService service;
+    private FavoriteService favservice;
 
     /**
      * メソッドを実行する
@@ -29,10 +32,12 @@ public class ReportAction extends ActionBase {
     public void process() throws ServletException, IOException {
 
         service = new ReportService();
+        favservice = new FavoriteService();
 
         //メソッドを実行
         invoke();
         service.close();
+        favservice.close();
     }
 
     /**
@@ -60,10 +65,29 @@ public class ReportAction extends ActionBase {
             putRequestScope(AttributeConst.FLUSH, flush);
             removeSessionScope(AttributeConst.FLUSH);
         }
-
         //一覧画面を表示
         forward(ForwardConst.FW_REP_INDEX);
+
+
+
+        //一覧内に表示するいいねの数
+        List<FavoriteCountView> favoritesCounts = favservice.countListUp(255);
+
+    for(ReportView rv : reports) {
+
+        Long favCount= 0L;
+
+        for(FavoriteCountView fcv : favoritesCounts) {
+            if(rv.getId() == fcv.getReport().getId()) {
+                favCount = fcv.getCount();
+                break;
+            }
+        }
+        rv.setFavCount(favCount);
+
+
     }
+}
 
     /**
      * 新規登録画面を表示する
@@ -111,6 +135,7 @@ public class ReportAction extends ActionBase {
                     day,
                     getRequestParam(AttributeConst.REP_TITLE),
                     getRequestParam(AttributeConst.REP_CONTENT),
+                    null,
                     null,
                     null);
 
@@ -229,6 +254,7 @@ public class ReportAction extends ActionBase {
                 redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
 
             }
+
         }
     }
 }

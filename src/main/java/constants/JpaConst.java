@@ -55,6 +55,7 @@ public interface JpaConst {
     //JPQL内パラメータ
     String JPQL_PARM_CODE = "code"; //社員番号
     String JPQL_PARM_PASSWORD = "password"; //パスワード
+    String JPQL_PARM_REPORT = "report";//日報
     String JPQL_PARM_EMPLOYEE = "employee"; //従業員
 
     //NamedQueryの nameとquery
@@ -70,7 +71,7 @@ public interface JpaConst {
             + JPQL_PARM_CODE + " AND e.password = :" + JPQL_PARM_PASSWORD;
     //指定した社員番号を保持する従業員の件数を取得する
     String Q_EMP_COUNT_REGISTERED_BY_CODE = ENTITY_EMP + ".countRegisteredByCode";
-    String Q_EMP_COUNT_REGISTERED_BY_CODE_DEF = "SELECT COUNT(e) FROM Employee AS e WHERE e.code = :" + JPQL_PARM_CODE;;
+    String Q_EMP_COUNT_REGISTERED_BY_CODE_DEF = "SELECT COUNT(e) FROM Employee AS e WHERE e.code = :" + JPQL_PARM_CODE;
     //全ての日報をidの降順に取得する
     String Q_REP_GET_ALL = ENTITY_REP + ".getAll";
     String Q_REP_GET_ALL_DEF = "SELECT r FROM Report AS r ORDER BY r.id DESC";
@@ -85,11 +86,19 @@ public interface JpaConst {
     String Q_REP_COUNT_ALL_MINE = ENTITY_REP + ".countAllMine";
     String Q_REP_COUNT_ALL_MINE_DEF = "SELECT COUNT(r) FROM Report AS r WHERE r.employee = :" + JPQL_PARM_EMPLOYEE;
 
+    //全てのいいねをidの降順に取得する
+    String Q_FAV_GET_ALL = ENTITY_REP + ".getAll";
+    String Q_FAV_GET_ALL_DEF = "SELECT f FROM Favorite AS f ORDER BY f.id DESC";
+
     //全てのいいねの件数を取得する
     String Q_FAV_COUNT = ENTITY_FAV + ".count";
     String Q_FAV_COUNT_DEF = "SELECT COUNT(f) FROM Favorite AS f";
     //指定した日報のidを含むいいね！の件数を取得する
     String Q_FAV_REPORT_ALL_MINE = ENTITY_FAV + ".countAllMine";
     String Q_FAV_REPORT_ALL_MINE_DEF = "SELECT new actions.views.FavoriteCountView(f.report_id, count(f)) FROM Favorite As f GROUP BY f.report_id";
+
+    //指定した社員IDと日報IDを保持するいいねの件数を取得する
+    String Q_FAV_COUNT_REGISTERED_BY_EMP_AND_REP = ENTITY_FAV + ".countRegistered";
+    String Q_FAV_COUNT_REGISTERED_BY_EMP_AND_REP_DEF = "SELECT COUNT(f) FROM Favorite AS f WHERE f.employee_id = :" +JPQL_PARM_EMPLOYEE + " AND f.report_id = :" + JPQL_PARM_REPORT;
 
 }
