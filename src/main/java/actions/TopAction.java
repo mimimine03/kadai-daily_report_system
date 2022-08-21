@@ -6,10 +6,12 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import actions.views.EmployeeView;
+import actions.views.FavoriteCountView;
 import actions.views.ReportView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
+import services.FavoriteService;
 import services.ReportService;
 
 /**
@@ -19,6 +21,7 @@ import services.ReportService;
 public class TopAction extends ActionBase {
 
     private ReportService service;
+    private FavoriteService favservice;
 
     /**
      * indexメソッドを実行する
@@ -27,11 +30,13 @@ public class TopAction extends ActionBase {
     public void process() throws ServletException, IOException {
 
         service = new ReportService();
+        favservice = new FavoriteService();
 
         //メソッドを実行
         invoke();
 
         service.close();
+        favservice.close();
     }
 
     /**
@@ -45,6 +50,22 @@ public class TopAction extends ActionBase {
         //ログイン中の従業員が作成した日報データを、指定されたページ数の一覧画面に表示する分取得する
         int page = getPage();
         List<ReportView> reports = service.getMinePerPage(loginEmployee, page);
+
+        //一覧内に表示するいいねの数
+        List<FavoriteCountView> favoritesCounts = favservice.countListUp(255);
+
+    for(ReportView rv : reports) {
+
+        Long favCount= 0L;
+
+        for(FavoriteCountView fcv : favoritesCounts) {
+            if(rv.getId() == fcv.getReport().getId()) {
+                favCount = fcv.getCount();
+                break;
+            }
+        }
+        rv.setFavCount(favCount);
+        }
 
 
 

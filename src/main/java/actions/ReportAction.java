@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 
 import actions.views.EmployeeView;
 import actions.views.FavoriteCountView;
+import actions.views.FavoriteView;
 import actions.views.ReportView;
 import constants.AttributeConst;
 import constants.ForwardConst;
@@ -23,7 +24,7 @@ import services.ReportService;
 public class ReportAction extends ActionBase {
 
     private ReportService service;
-    private FavoriteService favservice;
+    private FavoriteService favService;
 
     /**
      * メソッドを実行する
@@ -32,12 +33,12 @@ public class ReportAction extends ActionBase {
     public void process() throws ServletException, IOException {
 
         service = new ReportService();
-        favservice = new FavoriteService();
+        favService = new FavoriteService();
 
         //メソッドを実行
         invoke();
         service.close();
-        favservice.close();
+        favService.close();
     }
 
     /**
@@ -54,6 +55,22 @@ public class ReportAction extends ActionBase {
         //全日報データの件数を取得
         long reportsCount = service.countAll();
 
+        //一覧内に表示するいいねの数
+        List<FavoriteCountView> favoritesCounts = favService.countListUp(255);
+
+        for (ReportView rv : reports) {
+
+            Long favCount = 0L;
+
+            for (FavoriteCountView fcv : favoritesCounts) {
+                if (rv.getId() == fcv.getReport().getId()) {
+                    favCount = fcv.getCount();
+                    break;
+                }
+            }
+            rv.setFavCount(favCount);
+        }
+
         putRequestScope(AttributeConst.REPORTS, reports); //取得した日報データ
         putRequestScope(AttributeConst.REP_COUNT, reportsCount); //全ての日報データの件数
         putRequestScope(AttributeConst.PAGE, page); //ページ数
@@ -67,27 +84,7 @@ public class ReportAction extends ActionBase {
         }
         //一覧画面を表示
         forward(ForwardConst.FW_REP_INDEX);
-
-
-
-        //一覧内に表示するいいねの数
-        List<FavoriteCountView> favoritesCounts = favservice.countListUp(255);
-
-    for(ReportView rv : reports) {
-
-        Long favCount= 0L;
-
-        for(FavoriteCountView fcv : favoritesCounts) {
-            if(rv.getId() == fcv.getReport().getId()) {
-                favCount = fcv.getCount();
-                break;
-            }
-        }
-        rv.setFavCount(favCount);
-
-
     }
-}
 
     /**
      * 新規登録画面を表示する
@@ -172,18 +169,59 @@ public class ReportAction extends ActionBase {
 
         //idを条件に日報データを取得する
         ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+        //セッションからログイン中の従業員情報を取得
+        EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+
+        long count = favService.countByReport(rv);
+        rv.setFavCount(count);
+
+        Boolean isAlreadyFavorite = favService.isAlreadyFavorite(ev, rv);
+
+        putRequestScope(AttributeConst.REP_IS_ALREADY_FAVORITE,isAlreadyFavorite);
+
+
 
         if (rv == null) {
             //該当の日報データが存在しない場合はエラー画面を表示
             forward(ForwardConst.FW_ERR_UNKNOWN);
 
+
         } else {
 
             putRequestScope(AttributeConst.REPORT, rv); //取得した日報データ
 
+
+
             //詳細画面を表示
             forward(ForwardConst.FW_REP_SHOW);
+
         }
+    }
+
+    public void favorite() throws ServletException, IOException {
+
+        //idを条件に日報データを取得する
+        ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+        //セッションからログイン中の従業員情報を取得
+        EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+        //パラメータの値をもとにいいね情報のインスタンスを作成する
+        FavoriteView fv = new FavoriteView(
+            null,
+            ev, //ログインしている従業員を、日報作成者として登録する
+            rv);//いいねした日報のidを登録する
+
+        favService.create(fv);
+
+        //いいねテーブルのデータを参照
+        putRequestScope(AttributeConst.FAVORITE, fv);
+
+        //セッションに登録完了のフラッシュメッセージを設定
+        putSessionScope(AttributeConst.FLUSH, MessageConst.I_FAVORITE.getMessage());
+
+        //一覧画面にリダイレクト
+        redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
     }
 
     /**
@@ -249,9 +287,6 @@ public class ReportAction extends ActionBase {
 
                 //セッションに更新完了のフラッシュメッセージを設定
                 putSessionScope(AttributeConst.FLUSH, MessageConst.I_UPDATED.getMessage());
-
-                //一覧画面にリダイレクト
-                redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
 
             }
 

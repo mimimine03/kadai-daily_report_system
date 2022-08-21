@@ -7,12 +7,12 @@ package constants;
 public enum ForwardConst {
 
     //action
-    ACT("action"), ACT_TOP("Top"), ACT_EMP("Employee"), ACT_REP("Report"), ACT_AUTH("Auth"),
+    ACT("action"), ACT_TOP("Top"), ACT_EMP("Employee"), ACT_REP("Report"),ACT_FAV("Favorite"), ACT_AUTH("Auth"),
 
     //command
     CMD("command"), CMD_NONE(""), CMD_INDEX("index"), CMD_SHOW("show"), CMD_SHOW_LOGIN("showLogin"),
     CMD_LOGIN("login"), CMD_LOGOUT("logout"), CMD_NEW("entryNew"), CMD_CREATE("create"),
-    CMD_EDIT("edit"), CMD_UPDATE("update"), CMD_DESTROY("destroy"),
+    CMD_EDIT("edit"), CMD_UPDATE("update"), CMD_DESTROY("destroy"),CMD_FAVORITE("favorite"),
 
     //jsp
     FW_ERR_UNKNOWN("error/unknown"), FW_TOP_INDEX("topPage/index"), FW_LOGIN("login/login"),

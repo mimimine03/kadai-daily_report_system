@@ -2,12 +2,15 @@ package services;
 
 import java.util.List;
 
+import actions.views.EmployeeConverter;
+import actions.views.EmployeeView;
 import actions.views.FavoriteConverter;
 import actions.views.FavoriteCountView;
 import actions.views.FavoriteView;
+import actions.views.ReportConverter;
+import actions.views.ReportView;
 import constants.JpaConst;
 import models.Favorite;
-import models.validators.FavoriteValidator;
 
 public class FavoriteService extends ServiceBase{
 
@@ -22,9 +25,19 @@ public class FavoriteService extends ServiceBase{
 
 
         List<FavoriteCountView> fav_count =em.createNamedQuery(JpaConst.Q_FAV_REPORT_ALL_MINE, FavoriteCountView.class)
-                .setParameter(JpaConst.JPQL_PARM_REPORT, i)
                 .getResultList();
         return fav_count;
+    }
+
+    //日報の詳細画面に表示するいいねの数
+
+    public long countByReport(ReportView report) {
+
+        long fav_report =em.createNamedQuery(JpaConst.Q_FAV_COUNT_BY_REPORT, Long.class)
+                .setParameter(JpaConst.JPQL_PARM_REPORT,ReportConverter.toModel(report))
+                .getSingleResult();
+
+        return fav_report;
     }
 
 
@@ -39,30 +52,30 @@ public class FavoriteService extends ServiceBase{
 
 
     /**
-     * いいねの登録内容を元にデータを1件作成し、いいねテーブルに登録する
-     * @param fv いいねの登録内容
+     * ログイン中の社員の社員番号と日報のIDを取得し、返却する
+     *
      */
-    public List<String> create(FavoriteView fv) {
+    public Boolean isAlreadyFavorite(EmployeeView employee,ReportView report){
 
-       //登録内容のバリデーションを行う
-        List<String> errors = FavoriteValidator.validate(this, fv, true);
+        List<Long> fav_search =em.createNamedQuery(JpaConst.Q_FAV_SEARCH_ALREADY_FAVORITE,Long.class)
+                .setParameter(JpaConst.JPQL_PARM_REPORT,ReportConverter.toModel(report))
+                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE,EmployeeConverter.toModel(employee))
+                .getResultList();
 
-        if (errors.size() == 0) {
-            createInternal(fv);
+        boolean isAlreadyFavorite = false ;
+
+        if (fav_search.size() == 0) {
+            isAlreadyFavorite = false;
+
+
+            if (fav_search.size() == 1) {
+            isAlreadyFavorite = true;
+
+            }
         }
-      //バリデーションで発生したエラーを返却（エラーがなければ0件の空リスト）
-        return errors;
-    }
+        return isAlreadyFavorite;
 
-    public long countOver(FavoriteView fv) {
-
-        long favorites_over = (long) em.createNamedQuery(JpaConst.Q_FAV_COUNT_REGISTERED_BY_EMP_AND_REP, Long.class)
-                .setParameter(JpaConst.JPQL_PARM_REPORT, fv.getReport_id())
-                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE,fv.getEmployee_id())
-                .getSingleResult();
-        return favorites_over;
-    }
-
+}
 
 
     /**
@@ -78,7 +91,7 @@ public class FavoriteService extends ServiceBase{
          * いいねデータを1件登録する
          * @param fv 日報データ
          */
-        private void createInternal(FavoriteView fv) {
+        public void create(FavoriteView fv) {
 
             em.getTransaction().begin();
             em.persist(FavoriteConverter.toModel(fv));

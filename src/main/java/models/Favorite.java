@@ -31,8 +31,11 @@ import lombok.Setter;
         name = JpaConst.Q_FAV_REPORT_ALL_MINE,
         query = JpaConst.Q_FAV_REPORT_ALL_MINE_DEF),
 @NamedQuery(
-        name = JpaConst.Q_FAV_COUNT_REGISTERED_BY_EMP_AND_REP,
-        query = JpaConst.Q_FAV_COUNT_REGISTERED_BY_EMP_AND_REP_DEF)
+        name = JpaConst.Q_FAV_COUNT_BY_REPORT,
+        query = JpaConst.Q_FAV_COUNT_BY_REPORT_DEF),
+@NamedQuery(
+        name = JpaConst.Q_FAV_SEARCH_ALREADY_FAVORITE,
+        query = JpaConst.Q_FAV_SEARCH_ALREADY_FAVORITE_DEF)
 })
 
 
@@ -49,11 +52,11 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    //いいねした従業員
+    //いいねした従業員のid
     @ManyToOne
     @JoinColumn(name = JpaConst.FAV_COL_EMP, nullable = false)
     private Employee employee_id;
-    //いいねされた日報
+    //いいねされた日報のid
     @ManyToOne
     @JoinColumn(name = JpaConst.FAV_COL_REP, nullable = false)
     private Report report_id;
