@@ -10,6 +10,7 @@
 <c:set var="commIdx" value="${ForwardConst.CMD_INDEX.getValue()}" />
 <c:set var="commEdt" value="${ForwardConst.CMD_EDIT.getValue()}" />
 <c:set var="commFav" value="${ForwardConst.CMD_FAVORITE.getValue()}" />
+<c:set var="commDes" value="${ForwardConst.CMD_DESTROY.getValue()}" />
 
 <c:import url="/WEB-INF/views/layout/app.jsp">
     <c:param name="content">
@@ -60,10 +61,16 @@
 
         <c:if test="${sessionScope.login_employee.id != report.employee.id}">
             <p>
-
+                 <c:choose>
+                    <c:when test="${isAlreadyFavorite}">
+                        <c:url var="action" value="?action=${actRep}&command=${commDes}" />
+                        <c:set var="button_text" value="いいね！済み" />
+                    </c:when>
+                    <c:otherwise>
                         <c:url var="action" value="?action=${actRep}&command=${commFav}" />
                         <c:set var="button_text" value="いいね" />
-
+                    </c:otherwise>
+                </c:choose>
             <form method="POST" action="${action}">
                 <input type="hidden" name="${AttributeConst.FAV_EMP.getValue()}" value="${employee.id}" />
                 <input type="hidden" name="${AttributeConst.FAV_REP.getValue()}" value="${report.id}" />

@@ -27,7 +27,7 @@ public enum MessageConst {
 
     //追加
     I_FAVORITE("いいね！しました。"),
-    E_FAV_DUPLICATE("この日報は既にいいね！してあります。");
+    I_FAV_DELETE("いいね！を外しました。");
 
 
     /**

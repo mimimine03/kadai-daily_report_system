@@ -176,6 +176,10 @@ public class ReportAction extends ActionBase {
         long count = favService.countByReport(rv);
         rv.setFavCount(count);
 
+        Boolean isAlreadyFavorite = favService.isAlreadyFavorite(ev, rv);
+
+        putRequestScope(AttributeConst.REP_IS_ALREADY_FAVORITE,isAlreadyFavorite);
+
 
 
         if (rv == null) {
@@ -249,6 +253,22 @@ public class ReportAction extends ActionBase {
         }
     }
 
+    public void destroy() throws ServletException, IOException {
+        FavoriteView fv = favService.findOne(toNumber(getRequestParam(AttributeConst.FAV_ID)));
+
+        favService.destroy(fv);
+
+        //セッションに更新完了のフラッシュメッセージを設定
+        putSessionScope(AttributeConst.FLUSH, MessageConst.I_FAV_DELETE.getMessage());
+
+        //一覧画面にリダイレクト
+        redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
+
+
+
+
+    }
+
     /**
      * 更新を行う
      * @throws ServletException
@@ -286,6 +306,7 @@ public class ReportAction extends ActionBase {
                 putSessionScope(AttributeConst.FLUSH, MessageConst.I_UPDATED.getMessage());
 
             }
+
 
         }
     }
