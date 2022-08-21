@@ -106,4 +106,7 @@ public interface JpaConst {
     //指定した日報のidを含むいいね！の件数を取得する
     String Q_FAV_COUNT_BY_REPORT = ENTITY_FAV + ".countByReport";
     String Q_FAV_COUNT_BY_REPORT_DEF = "SELECT COUNT(f) FROM Favorite As f WHERE f.report_id = :" + JPQL_PARM_REPORT;
+
+    String Q_FAV_SEARCH_FAVORITE = ENTITY_FAV + "seachFavorite";
+    String Q_FAV_SEARCH_FAVORITE_DEF = "SELECT f FROM Favorite As f WHERE f.employee_id = :" + JPQL_PARM_EMPLOYEE + " AND f.report_id = :" + JPQL_PARM_REPORT;
 }

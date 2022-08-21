@@ -254,7 +254,13 @@ public class ReportAction extends ActionBase {
     }
 
     public void destroy() throws ServletException, IOException {
-        FavoriteView fv = favService.findOne(toNumber(getRequestParam(AttributeConst.FAV_ID)));
+
+      //idを条件に日報データを取得する
+        ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.FAV_REP)));
+        //セッションからログイン中の従業員情報を取得
+        EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+        FavoriteView fv = favService.seachFavorite(ev, rv);
 
         favService.destroy(fv);
 

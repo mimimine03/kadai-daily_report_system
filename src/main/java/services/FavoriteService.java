@@ -2,6 +2,8 @@ package services;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import actions.views.EmployeeConverter;
 import actions.views.EmployeeView;
 import actions.views.FavoriteConverter;
@@ -66,16 +68,32 @@ public class FavoriteService extends ServiceBase{
 
         if (fav_search.size() == 0) {
             isAlreadyFavorite = false;
-
-
-            if (fav_search.size() == 1) {
-            isAlreadyFavorite = true;
-
+        } else if (fav_search.size() >= 1) {
+            for(Long count : fav_search) {
+              if(count > 0) {
+                isAlreadyFavorite = true;
+                break;
+              }
             }
         }
         return isAlreadyFavorite;
 
 }
+    public FavoriteView seachFavorite(EmployeeView employee,ReportView report){
+        Favorite favorite = null;
+        try{
+          favorite =em.createNamedQuery(JpaConst.Q_FAV_SEARCH_FAVORITE,Favorite.class)
+                .setParameter(JpaConst.JPQL_PARM_REPORT,ReportConverter.toModel(report))
+                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE,EmployeeConverter.toModel(employee))
+                .getSingleResult();
+        } catch (NoResultException e) {
+          favorite = new Favorite(); //NullPointerException回避
+        }
+
+        return FavoriteConverter.toView(favorite);
+    }
+
+
 
 
     /**
@@ -99,14 +117,16 @@ public class FavoriteService extends ServiceBase{
             em.getTransaction().commit();
         }
 
+
         /**
          * いいねデータを1件削除する
          * @param fv 日報データ
          */
         public void destroy(FavoriteView fv) {
 
+            Favorite f = findOneInternal(fv.getId());
             em.getTransaction().begin();
-            em.remove(fv);
+            em.remove(f);
             em.getTransaction().commit();
             em.close();
 
