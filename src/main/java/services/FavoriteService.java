@@ -2,8 +2,6 @@ package services;
 
 import java.util.List;
 
-import actions.views.EmployeeConverter;
-import actions.views.EmployeeView;
 import actions.views.FavoriteConverter;
 import actions.views.FavoriteCountView;
 import actions.views.FavoriteView;
@@ -52,33 +50,6 @@ public class FavoriteService extends ServiceBase{
 
 
     /**
-     * ログイン中の社員の社員番号と日報のIDを取得し、返却する
-     *
-     */
-    public Boolean isAlreadyFavorite(EmployeeView employee,ReportView report){
-
-        List<Long> fav_search =em.createNamedQuery(JpaConst.Q_FAV_SEARCH_ALREADY_FAVORITE,Long.class)
-                .setParameter(JpaConst.JPQL_PARM_REPORT,ReportConverter.toModel(report))
-                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE,EmployeeConverter.toModel(employee))
-                .getResultList();
-
-        boolean isAlreadyFavorite = false ;
-
-        if (fav_search.size() == 0) {
-            isAlreadyFavorite = false;
-
-
-            if (fav_search.size() == 1) {
-            isAlreadyFavorite = true;
-
-            }
-        }
-        return isAlreadyFavorite;
-
-}
-
-
-    /**
      * idを条件にデータを1件取得する
      * @param id
      * @return 取得データのインスタンス
@@ -86,6 +57,7 @@ public class FavoriteService extends ServiceBase{
     private Favorite findOneInternal(int id) {
         return em.find(Favorite.class, id);
     }
+
 
         /**
          * いいねデータを1件登録する

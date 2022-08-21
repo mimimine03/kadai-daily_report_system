@@ -60,29 +60,16 @@
 
         <c:if test="${sessionScope.login_employee.id != report.employee.id}">
             <p>
-                <c:choose>
-                    <c:when test="${isAlreadyFavorite}">
-                        <c:set var="action"
-                            value="<c:url value='?action=${actFav}&command=${commXXX}' />" />
-                        <c:set var="button_text" value="いいね！済み" />
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="action"
-                            value="<c:url value='?action=${actFav}&command=${commFav}' />" />
+
+                        <c:url var="action" value="?action=${actRep}&command=${commFav}" />
                         <c:set var="button_text" value="いいね" />
-                    </c:otherwise>
-                </c:choose>
+
             <form method="POST" action="${action}">
-                <input type="hidden" name="${AttributeConst.FAV_ID.getValue()}"
-                    value="${favorite.id}" /> <input type="hidden"
-                    name="${AttributeConst.FAV_EMP.getValue()}"
-                    value="${favorite.employee_id}" /> <input type="hidden"
-                    name="${AttributeConst.FAV_REP.getValue()}"
-                    value="${favorite.report_id}" />
+                <input type="hidden" name="${AttributeConst.FAV_EMP.getValue()}" value="${employee.id}" />
+                <input type="hidden" name="${AttributeConst.FAV_REP.getValue()}" value="${report.id}" />
 
                 <button type="submit">${button_text}</button>
             </form>
-            </p>
         </c:if>
         <a href="<c:url value='?action=${actRep}&command=${commEdt}&id=${report.id}' />">この日報を編集する </a>
         <p>

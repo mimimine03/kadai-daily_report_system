@@ -57,6 +57,7 @@ public interface JpaConst {
     String JPQL_PARM_PASSWORD = "password"; //パスワード
     String JPQL_PARM_REPORT = "report";//日報
     String JPQL_PARM_EMPLOYEE = "employee"; //従業員
+    String JPQL_PARM_FAVORITE = "favorite";//いいね
 
     //NamedQueryの nameとquery
     //全ての従業員をidの降順に取得する
@@ -105,5 +106,4 @@ public interface JpaConst {
     //指定した日報のidを含むいいね！の件数を取得する
     String Q_FAV_COUNT_BY_REPORT = ENTITY_FAV + ".countByReport";
     String Q_FAV_COUNT_BY_REPORT_DEF = "SELECT COUNT(f) FROM Favorite As f WHERE f.report_id = :" + JPQL_PARM_REPORT;
-
 }
