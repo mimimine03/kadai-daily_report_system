@@ -172,13 +172,9 @@ public class ReportAction extends ActionBase {
         //セッションからログイン中の従業員情報を取得
         EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
 
-
         long count = favService.countByReport(rv);
-        rv.setFavCount(count);
 
         Boolean isAlreadyFavorite = favService.isAlreadyFavorite(ev, rv);
-
-        putRequestScope(AttributeConst.REP_IS_ALREADY_FAVORITE,isAlreadyFavorite);
 
 
 
@@ -191,6 +187,9 @@ public class ReportAction extends ActionBase {
 
             putRequestScope(AttributeConst.REPORT, rv); //取得した日報データ
             putRequestScope(AttributeConst.EMPLOYEE, ev); //取得した日報データ
+            putRequestScope(AttributeConst.REP_IS_ALREADY_FAVORITE,isAlreadyFavorite);
+            rv.setFavCount(count);
+
 
 
 
