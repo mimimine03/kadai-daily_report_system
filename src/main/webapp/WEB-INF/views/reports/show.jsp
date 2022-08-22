@@ -78,7 +78,11 @@
                 <button type="submit">${button_text}</button>
             </form>
         </c:if>
+        <c:if test="${sessionScope.login_employee.id == report.employee.id}">
+        <p>
         <a href="<c:url value='?action=${actRep}&command=${commEdt}&id=${report.id}' />">この日報を編集する </a>
+        </p>
+        </c:if>
         <p>
             <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">一覧に戻る</a>
         </p>
